@@ -1,0 +1,32 @@
+---
+- name: Install httpd package
+  hosts: all
+  become: true
+  tasks:
+
+  - name: Install httpd package on RedHat
+    yum:
+      name: httpd
+      state: present
+    when: ansible_os_family == "RedHat"
+
+  - name: Start httpd service
+    service:
+      name: http---     #Giving bug intensionally
+      state: started
+    when: ansible_os_family == "RedHat"
+    ignore_errors: yes
+
+
+  - name: Install apache2 package on Debian
+    apt:
+      name: apache2
+      service: started
+    when: ansible_os_family == "Debian"
+
+
+  - name: Copy index.html file
+    copy:
+      src: /home/ansadmin/playbooks/index.html
+      dest: /var/www/html
+      mode: 0666
